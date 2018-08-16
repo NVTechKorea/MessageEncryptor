@@ -2,6 +2,7 @@
 Securely send private data with your friends, with your own passcode!
 This application does not require any internet connections.
 The messages are encrypted with AES 256, which is one of the most secure encrypting technology in the world.
+* The program name is DRMessageEncryptor when you execute it.
 
 # Supported OS
 Any OS with Java runtime installed are supported! (Windows, Mac, and all Linux distros)
