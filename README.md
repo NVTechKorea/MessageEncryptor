@@ -4,11 +4,15 @@ This application does not require any internet connections.
 The messages are encrypted with AES 256, which is one of the most secure encrypting technology in the world.
 * The program name is DRMessageEncryptor when you execute it.
 
-# Supported OS
+# Supported Desktop OS
 Any OS with Java runtime installed are supported! (Windows, Mac, and all Linux distros)
 - For Windows: Download Universal
 - For macOS: Able to use either Universal and Mac Only version (app format)
 - For Linux: Download Universal
+
+# Supported Mobile OS
+Android is now available!
+Go to the Android folder in the master branch.
 
 # Included package
 This program includes 3 external packages: 
