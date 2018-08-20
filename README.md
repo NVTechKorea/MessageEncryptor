@@ -10,19 +10,25 @@ Any OS with Java runtime installed are supported! (Windows, Mac, and all Linux d
 - For macOS: Able to use either Universal and Mac Only version (app format)
 - For Linux: Download Universal
 
-# Supported Mobile OS
-Android is now available!
-Go to the Android folder in the master branch.
-
-# Included package
+# Included packages for Desktop
 This program includes 3 external packages: 
 - commons-codec-1.11
 - DreamOS Launch Platform 0.9.4
 - AES 256 Java code from http://aesencryption.net.
 
-# Requirement
+# Requirements for Desktop
 Java runtime is required! (Not Java Development Kit)
 Download Java runtime at: http://java.com
+
+# Supported Mobile OS
+Android is now available!
+Go to the Android folder in the master branch.
+
+# Included packages for Mobile
+- None
+
+# Requirements for Mobile
+- Android 4.1 or above
 
 # Update Log
 1.0
