@@ -39,3 +39,7 @@ Go to the Android folder in the master branch.
 - Added scroller
 - Added About this program
 - Added auto line breaking
+
+1.2 (Windows / Universal / Mac)
+- Added Update system
+- Added software verification system
