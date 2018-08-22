@@ -13,7 +13,7 @@ Any OS with Java runtime installed are supported! (Windows, Mac, and all Linux d
 # Included packages for Desktop
 This program includes 3 external packages:
 - commons-codec-1.11
-- DreamOS Launch Platform 0.9.4
+- DreamOS Launch Platform 0.9.5 For MessageEncryptor
 - AES 256 Java code from http://aesencryption.net.
 
 # Requirements for Desktop
