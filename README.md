@@ -11,7 +11,7 @@ Any OS with Java runtime installed are supported! (Windows, Mac, and all Linux d
 - For Linux: Download Universal
 
 # Included packages for Desktop
-This program includes 3 external packages: 
+This program includes 3 external packages:
 - commons-codec-1.11
 - DreamOS Launch Platform 0.9.4
 - AES 256 Java code from http://aesencryption.net.
@@ -31,6 +31,11 @@ Go to the Android folder in the master branch.
 - Android 4.1 or above
 
 # Update Log
-1.0
+1.0 (Android/Universal/Mac)
 - Initial release
 - This release contains: Encrypt and decrypt text with custom passcode.
+
+1.1 (Universal/Mac)
+- Added scroller
+- Added About this program
+- Added auto line breaking
