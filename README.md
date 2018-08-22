@@ -43,3 +43,7 @@ Go to the Android folder in the master branch.
 1.2 (Windows / Universal / Mac)
 - Added Update system
 - Added software verification system
+
+1.21 (Windows / Universal / Mac)
+- Stabilized Update system
+- Fixed NullPointerException
