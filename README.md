@@ -20,6 +20,20 @@ This program includes 3 external packages:
 Java runtime is required! (Not Java Development Kit)
 Download Java runtime at: http://java.com
 
+# Desktop app error codes
+- VERF_FAIL_SIGFILE_EMPTY
+    - Signature file is empty
+- VERF_FAIL_SIGFILE_NOSIGFOUND
+    - Signature not found
+- VERF_FAIL_SIGFILE_VERNOTMATCH
+    - Signature version does not match
+- VERF_FAIL_SIGFILE_UNVERF
+    - Unverified software
+- VERF_FAIL_SIGFILE_UNSIG
+    - Unsigned software
+    - No longer supported version
+
+
 # Supported Mobile OS
 Android is now available!
 Go to the Android folder in the master branch.
