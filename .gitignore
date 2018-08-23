@@ -1,2 +1,7 @@
 
 .DS_Store
+*.prefs
+*.class
+ProjectSpace/bin/commons-codec-1.11.jar
+ProjectSpace/.classpath
+ProjectSpace/.project

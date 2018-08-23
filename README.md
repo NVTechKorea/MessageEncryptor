@@ -1,6 +1,6 @@
 # MessageEncryptor
 Securely send private data with your friends, with your own passcode!
-This application does not require any internet connections.
+This application does not require any internet connections after first run.
 The messages are encrypted with AES 256, which is one of the most secure encrypting technology in the world.
 * The program name is DRMessageEncryptor when you execute it.
 
@@ -45,14 +45,15 @@ Go to the Android folder in the master branch.
 - Android 4.1 or above
 
 # Version signing status
-- [SIGNED] 1.4
-- [SIGNED] 1.3
-- [SIGNED] 1.21
-- [UNSIGNED] 1.2
+- [YES] 1.5
+- [YES] 1.4
+- [NO] 1.3
+- [NO] 1.21
+- [NO] 1.2
 - [NOSIGN] 1.1 / 1.0
 
-# Update Log
-1.0 (Android/Universal/Mac)
+# Desktop Update Log
+1.0 (Universal/Mac)
 - Initial release
 - This release contains: Encrypt and decrypt text with custom passcode.
 
@@ -80,3 +81,14 @@ Go to the Android folder in the master branch.
 1.4 (Windows / Universal / Mac)
 - Fixed PicoMessage error
 - Fixed signature server access address mistake
+
+1.5 (Windows / Universal / Mac)
+- Added AutoUpdate at launch
+
+# Mobile Update Log
+1.0 (Android)
+- Initial Release
+- This release contains: Encrypt and decrypt text with custom passcode.
+
+1.01 (Android)
+- Changed icon
