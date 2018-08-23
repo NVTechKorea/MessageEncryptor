@@ -30,6 +30,12 @@ Go to the Android folder in the master branch.
 # Requirements for Mobile
 - Android 4.1 or above
 
+# Version signing status
+- [SIGNED] 1.3
+- [SIGNED] 1.21
+- [UNSIGNED] 1.2
+- [NOSIGN] 1.1 / 1.0
+
 # Update Log
 1.0 (Android/Universal/Mac)
 - Initial release
@@ -47,3 +53,11 @@ Go to the Android folder in the master branch.
 1.21 (Windows / Universal / Mac)
 - Stabilized Update system
 - Fixed NullPointerException
+
+1.3 (Windows / Universal / Mac)
+- Enhanced signing security
+- Added messages in between the buttons
+	- Encrypt / Decrypt successful
+	- Wrong passcode
+	- Downloading update
+	- No header found
