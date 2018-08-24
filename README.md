@@ -92,3 +92,6 @@ Go to the Android folder in the master branch.
 
 1.1 (Android)
 - Changed icon
+
+1.2 (Android)
+- Added toast messages
