@@ -90,5 +90,5 @@ Go to the Android folder in the master branch.
 - Initial Release
 - This release contains: Encrypt and decrypt text with custom passcode.
 
-1.01 (Android)
+1.1 (Android)
 - Changed icon
