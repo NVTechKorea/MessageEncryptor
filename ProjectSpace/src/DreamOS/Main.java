@@ -7,7 +7,7 @@ public class Main{
 	final static String runtimeVer = "DreamOS Launch Platform 0.9.5 For MessageEncryptor";
 	final static String programManu = "DreamProjectGroup";
 	final static String programName = "DRMessageEncryptor";
-	final static String programVers = "1.5";
+	final static String programVers = "1.6";
 	final static String programEdit = "null";
 	static String nameOfOS = null;
 	static String userDir = null;

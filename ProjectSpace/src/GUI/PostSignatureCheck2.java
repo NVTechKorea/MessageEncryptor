@@ -9,7 +9,7 @@ import java.io.File;
 public class PostSignatureCheck2 {
 	private String signatureFileLoc = null;
 	private String signatureFileLink = null;
-	private String ver = "1.5";
+	private String ver = "1.6";
 	public PostSignatureCheck2() {}
 	public void regvar(String path) {
 		signatureFileLoc = path + "SignatureFile.signdoc";

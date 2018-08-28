@@ -10,9 +10,9 @@ import java.io.File;
 
 public class SignatureCheck {
 	private String signatureFileLoc = null;
-	private String splitter = "wiSiAlNOwEh8UoBQhLVkuA==";
+	private String splitter = "<SPLITAREA>";
 	private String signatureFileLink = null;
-	private String ver = "1.5";
+	private String ver = "1.6";
 	private String var = null;
 	public SignatureCheck() {}
 	public void regvar(String path, String vvar) {
@@ -57,7 +57,7 @@ public class SignatureCheck {
 								}else {
 									String encryptSignOrig = "firm.signed.ver=" + ver;
 									String encryptSign = EncryptTool.aesEncrypt(encryptSignOrig, "alpine");
-									encryptSignOrig = "oFuxbpSV1gga5pMhOJ9P7w==" + splitter + encryptSign;
+									encryptSignOrig = "[SIGNDAT]" + splitter + encryptSign + splitter + "[SIGNDAT]";
 									if (!parse[2].equals(encryptSignOrig)) {
 										showWarning("Unable to execute program.\nVERF_FAIL_SIGFILE_UNVERF");
 										break;
