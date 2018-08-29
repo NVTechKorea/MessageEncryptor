@@ -45,6 +45,7 @@ Go to the Android folder in the master branch.
 - Android 4.1 or above
 
 # Version signing status
+- [YES] 1.6
 - [YES] 1.5
 - [NO] 1.4
 - [NO] 1.3
@@ -62,15 +63,15 @@ Go to the Android folder in the master branch.
 - Added About this program
 - Added auto line breaking
 
-1.2 (Windows / Universal / Mac)
+1.2 (Jar / Mac)
 - Added Update system
 - Added software verification system
 
-1.21 (Windows / Universal / Mac)
+1.21 (Jar / Mac)
 - Stabilized Update system
 - Fixed NullPointerException
 
-1.3 (Windows / Universal / Mac)
+1.3 (Jar / Mac)
 - Enhanced signing security
 - Added messages in between the buttons (PicoMessage)
 	- Encrypt / Decrypt successful
@@ -78,12 +79,17 @@ Go to the Android folder in the master branch.
 	- Downloading update
 	- No header found
 
-1.4 (Windows / Universal / Mac)
+1.4 (Jar / Mac)
 - Fixed PicoMessage error
 - Fixed signature server access address mistake
 
-1.5 (Windows / Universal / Mac)
+1.5 (Jar / Mac)
 - Added AutoUpdate at launch
+
+1.6 (Jar / Mac)
+- New encryption engine (Double encryption)
+    - Security strengthened
+- New header
 
 # Mobile Update Log
 1.0 (Android)
