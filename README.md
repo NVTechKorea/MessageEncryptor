@@ -45,13 +45,22 @@ Go to the Android folder in the master branch.
 - Android 4.1 or above
 
 # Version signing status
-- [YES] 1.6
+- [YES] 1.7
+- [NO] 1.6
 - [YES] 1.5
 - [NO] 1.4
 - [NO] 1.3
 - [NO] 1.21
 - [NO] 1.2
 - [NOSIGN] 1.1 / 1.0
+
+# Desktop app preference manual
+To change the preference, follow these steps.
+1. Press option button. You will see the current preference.
+2. Copy the text. 
+3. Type /apply [option] and replace the option with the copied text.
+4. Modify true / false
+5. Press option button again.
 
 # Desktop Update Log
 1.0 (Universal/Mac)
@@ -86,10 +95,20 @@ Go to the Android folder in the master branch.
 1.5 (Jar / Mac)
 - Added AutoUpdate at launch
 
-1.6 (Jar / Mac)
+1.6 (Jar / Mac)    THIS VERSION HAS A CRITICAL ERROR. WE STRONGLY RECOMMEND NOT TO USE THIS VERSION.
 - New encryption engine (Double encryption)
     - Security strengthened
 - New header
+- **BUG FOUND**
+
+1.7 (Jar / Mac)
+- New encryption engine (Triple encryption)
+    - 1.6 Decryption bug fixed
+- New header
+- Available to change some preferences (See the manual)
+- Optional update at launch
+- Emergency auto-downgrade
+    - If there is a critical error, then the program will automatically downgrade to the latest signed version.
 
 # Mobile Update Log
 1.0 (Android)
@@ -101,3 +120,13 @@ Go to the Android folder in the master branch.
 
 1.2 (Android)
 - Added toast messages
+
+1.3 (Android)
+- Toast message bug fixed
+
+# Known bugs
+- 1.6 Desktop
+    - Major bug: Users are not able to decrypt with new engine.
+
+- 1.7 Desktop
+    - Minor bug: If the user choose "No" on the launch update screen, then the program will ask the user again.

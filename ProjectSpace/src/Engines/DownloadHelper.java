@@ -47,6 +47,7 @@ public class DownloadHelper {
 				DeleteFile df = new DeleteFile();
 				df.initiate(var, true);
 				System.exit(0);
+			}if(process.equals("verificationServer-post")) {
 			}else if (process.equals("getUpdateInfo")){
 				JFrame warningFrame = new JFrame("Error");
 				JOptionPane.showMessageDialog(warningFrame, "Unable to establish connection between update server.");

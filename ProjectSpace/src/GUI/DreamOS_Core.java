@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JButton;
 
 import DreamOS.*;
+import Engines.TCEngine;
 import Engines.DownloadHelper;
 import java.awt.Color;
 import java.awt.Font;
@@ -23,7 +24,8 @@ import javax.swing.SwingConstants;
 
 public class DreamOS_Core extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private final String ver = "1.6";
+	private final String ver = "1.7";
+	private final double vers = 1.7;
 	private final String programManu = "DreamProjectGroup";
 	private final String programName = "DRMessageEncryptor";
 	private JPanel contentPane;
@@ -51,20 +53,26 @@ public class DreamOS_Core extends JFrame {
 	private JButton btnUpdate;
 	private JButton btnDecryptlegacy;
 	private JButton btnEncryptlegacy;
+	private JButton btnPref;
 
-	private String headerMain = "oFuxbpSV1gga5pMhOJ9P7w==";
-	private String splitter = "wiSiAlNOwEh8UoBQhLVkuA==";
-	private String header = headerMain + splitter;
+	private final String headerMain = "oFuxbpSV1gga5pMhOJ9P7w==";
+	private final String splitter = "wiSiAlNOwEh8UoBQhLVkuA==";
+	private final String header = headerMain + splitter;
+	private String prefpath = null;
 
 	private boolean endecryptLegacy = false;
-
-	public void initiate() {
-		initNotifier();
-		update(true);
+	private boolean chkupdatelaunch = true;
+	private boolean blockupdate = false;
+	
+	private int count = 0;
+	
+	TCEngine ne = null;
+	public void initiate(String rspath) {
+		prefpath = rspath;
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					DreamOS_Core frame = new DreamOS_Core();
+					DreamOS_Core frame = new DreamOS_Core(rspath);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -72,10 +80,9 @@ public class DreamOS_Core extends JFrame {
 			}
 		});
 	}
-
-	public DreamOS_Core() {
+	
+	public void generateGraphic() {
 		this.setResizable(false);
-
 		setTitle("DRMessageEncryptor " + ver);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 449, 429);
@@ -187,9 +194,37 @@ public class DreamOS_Core extends JFrame {
 		btnEncryptlegacy = new JButton("Encrypt (Legacy)");
 		btnEncryptlegacy.setBounds(156, 372, 148, 29);
 		contentPane.add(btnEncryptlegacy);
+		
+		btnPref = new JButton("Option");
+		btnPref.setBounds(316, 372, 128, 29);
+		contentPane.add(btnPref);
+	}
 
+	public DreamOS_Core(String rspath) {
+		prefpath = rspath;
+		generateGraphic();
+		count = count + 1;
+		ne = new TCEngine();
 		print("Object creation process finished.");
-		buttonListener();
+		print("Loading preferences...");
+		loadPref();
+		checkForUpdateAtLaunch();
+	}
+	public String loadPref() {
+		ReadFile rf = new ReadFile();
+		String tempPref = rf.initiate(prefpath);
+		String parse[] = tempPref.split(" -");
+		if(parse[1].equals("checkUpdateAtLaunch false")) {
+			chkupdatelaunch = false;
+		}else {
+			chkupdatelaunch = true;
+		}
+		if(parse[3].equals("blockUpdate true")) {
+			blockupdate = true;
+		}else {
+			blockupdate = false;
+		}
+		return tempPref;
 	}
 
 	public void initNotifier() {
@@ -284,7 +319,12 @@ public class DreamOS_Core extends JFrame {
 		lblEncryptSuccess.setVisible(false);
 		lblNoHeader.setVisible(false);
 	}
-
+	public void checkForUpdateAtLaunch() {
+		if(chkupdatelaunch) {
+			update(true);
+		}
+		buttonListener();
+	}
 	public void buttonListener() {
 		print("Waiting for an action...");
 		btnEncryptlegacy.addActionListener(new ActionListener() {
@@ -325,123 +365,145 @@ public class DreamOS_Core extends JFrame {
 				calculationEngine(true);
 			}
 		});
+		btnPref.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				disableAllMsgCode();
+				readPreferences();
+			}
+		});
 	}
-
+	public void readPreferences() {
+		String option = PassKey.getText();
+		if(option.contains("/apply")) {
+			if(option.contains(" -")) {
+				String parsable[] = option.split(" -");
+				if(parsable.length==4) {
+					WriteFile wf = new WriteFile();
+					String newOption[] = option.split("apply");
+					wf.initiate(prefpath, newOption[1]);
+					loadPref();
+					print(newOption[1]);
+					dialogBox("Preferences applied.", "Preference Installer");
+				}else {
+					print("Arguments are too short or too long!");
+				}
+			}else {
+				
+			}
+		}else {
+			String show = loadPref();
+			MsgResult.setText(show);
+		}
+	}
 	public void calculationEngine(boolean encrypt) {
-		boolean pass = checkRequiredFields();
 		String finalMessage = null;
-		if (pass) {
-			if (encrypt) {
-				String passcode = PassKey.getText();
-				String contents = MsgToConvert.getText();
-				int protectionalPasscode = passcode.length();
-				String protectionalPasscodeInString = protectionalPasscode + "StringConverted";
-				String newHeader = EncryptTool.aesEncrypt(protectionalPasscodeInString, "length");
-				String firstEncryption = EncryptTool.aesEncrypt(contents, passcode);
-				String secondEncryption = EncryptTool.aesEncrypt(firstEncryption, protectionalPasscodeInString);
-				finalMessage = "[START_OF_DATA]<splitTag>" + newHeader + secondEncryption
-						+ "<splitTag>[END_OF_CONTENT]<splitTag>WRITTEN_VER: " + ver + "<splitTag>[END_OF_DATA]";
+		String content = MsgToConvert.getText();
+		String pass = PassKey.getText();
+		if(content.equals("")||pass.equals("")) {
+			showWarning("One of the content fields are empty.\nPlease type contents in Passkey and Message To Convert.");
+		}else {
+			if(encrypt) {
+				finalMessage = ne.encrypt(content, pass);
+				String addData = finalMessage + "WrittenVersion:" + ver + "<data>";
+				finalMessage = addData;
+				MsgResult.setText(finalMessage);
 				lblEncryptSuccess.setVisible(true);
-			} else {
-				String passcode = PassKey.getText();
-				String contents = MsgToConvert.getText();
-				if (contents.contains("[START_OF_DATA]<splitTag>") && contents.contains("[END_OF_DATA]")) {
-					try {
-						int protectionalPasscode = passcode.length();
-						String protectionalPasscodeInString = protectionalPasscode + "StringConverted";
-						String newHeader = EncryptTool.aesEncrypt(protectionalPasscodeInString, "length");
-						String firstParse[] = contents.split(newHeader);
-						int getFirstParseLeng = firstParse.length;
-						if(getFirstParseLeng==1) {
-							disableAllMsgCode();
-							lblWrongPasscode.setVisible(true);
-							finalMessage = "";
-						}else {
-							print(firstParse[1]);
-							String removedTail[] = firstParse[1].split("<splitTag>");
-							print(removedTail.length + "");
-							print(removedTail[0]);
-							String firstDecryption = EncryptTool.aesDecrypt(removedTail[0], protectionalPasscodeInString);
-							if (firstDecryption.equals(":ERR::WRONG::PW")) {
-								disableAllMsgCode();
-								lblWrongPasscode.setVisible(true);
-								finalMessage = "";
-							} else {
-								print(firstDecryption);
-								finalMessage = EncryptTool.aesDecrypt(firstDecryption, passcode);
-								print(finalMessage);
-								lblDecryptSuccess.setVisible(true);
-							}
-						}
-					} catch (Exception e) {
-						String er = e.toString();
-						showWarning("Unable to continue.\nThe program ran into panic: \n" + er);
-						e.printStackTrace();
-					}
-				} else {
-					disableAllMsgCode();
+			}else {
+				finalMessage = ne.decrypt(content, pass);
+				if(finalMessage.equals("SYSTEM_return:noHeaderData")) {
+					finalMessage = "";
 					lblNoHeader.setVisible(true);
+				}else if(finalMessage.equals("SYSTEM_return:wrongPasswordData")) {
+					finalMessage = "";
+					lblWrongPasscode.setVisible(true);
+				}else if(finalMessage.equals("SYSTEM_return:brokenData")) {
+					finalMessage = "";
+					lblNoHeader.setVisible(true);
+				}else {
+					lblDecryptSuccess.setVisible(true);
+					MsgResult.setText(finalMessage);
 				}
 			}
-			MsgResult.setText(finalMessage);
+			
 		}
 	}
 
 	public void update(boolean atLaunch) {
-		lblDownloading.setVisible(true);
-		print("Running update tool...");
-		print("Getting information...");
-		OSReader os = new OSReader();
-		DownloadHelper dlhelper = new DownloadHelper();
-		String[] osdata = os.initiate();
-		String OSKind = osdata[1];
-		OSKind = OSKind.toLowerCase();
-		String sUrl = "https://raw.githubusercontent.com/NVTechKorea/MessageEncryptor/master/VerificationData/Latest.signdoc";
-		path = osdata[2] + osdata[0] + programManu + osdata[0] + programName + osdata[0] + ver + osdata[0] + "storage"
-				+ osdata[0] + "Latest.signdoc";
-		dlhelper.initiate(sUrl, path, "getUpdateInfo");
-		ReadFile rf = new ReadFile();
-		String LatestVer = rf.initiate(path);
-		if (LatestVer != null) {
-			if (!LatestVer.equals(ver)) {
-				if (atLaunch) {
-					dialogBox("Update found: " + LatestVer + "\nCurrent version: " + ver
-							+ "\nClose this window to download latest version.", "Update found");
+		if(!blockupdate) {
+			lblDownloading.setVisible(true);
+			print("Running update tool...");
+			print("Getting information...");
+			boolean downgrade = false;
+			OSReader os = new OSReader();
+			DownloadHelper dlhelper = new DownloadHelper();
+			String[] osdata = os.initiate();
+			String OSKind = osdata[1];
+			OSKind = OSKind.toLowerCase();
+			String sUrl = "https://raw.githubusercontent.com/NVTechKorea/MessageEncryptor/master/VerificationData/Latest.signdoc";
+			path = osdata[2] + osdata[0] + programManu + osdata[0] + programName + osdata[0] + ver + osdata[0] + "storage"
+					+ osdata[0] + "Latest.signdoc";
+			dlhelper.initiate(sUrl, path, "getUpdateInfo");
+			ReadFile rf = new ReadFile();
+			String LatestVer = rf.initiate(path);
+			if (LatestVer != null) {
+				double fServer = Double.parseDouble(LatestVer);
+				if(fServer<vers) {
+					downgrade = true;
+					dialogBox("Current version has a problem and needed to be\ndowngraded to the latest signed version.","Update Helper");
+				}else {
+					downgrade = false;
 				}
-				if (OSKind.contains("windows")) {
-					print("Downloading for Windows...");
-					sUrl = "https://github.com/NVTechKorea/MessageEncryptor/raw/master/Windows/" + LatestVer
-							+ "/MessageEncryptor.zip";
-				} else if (OSKind.contains("mac")) {
-					print("Downloading for macOS...");
-					sUrl = "https://github.com/NVTechKorea/MessageEncryptor/raw/master/macOS/" + LatestVer
-							+ "/MessageEncryptor.zip";
+				if (!LatestVer.equals(vers + "")) {
+					boolean yes = true;
+					if(!downgrade) {
+						yes = ynDBox("Update found: " + LatestVer + "\nCurrent version: " + vers
+								+ "\nWould you like to update?", "Update found");
+					}else {
+						yes = true;
+					}
+					if(yes) {
+						if (OSKind.contains("windows")) {
+							print("Downloading for Windows...");
+							sUrl = "https://github.com/NVTechKorea/MessageEncryptor/raw/master/Windows/" + LatestVer
+									+ "/MessageEncryptor.zip";
+						} else if (OSKind.contains("mac")) {
+							print("Downloading for macOS...");
+							sUrl = "https://github.com/NVTechKorea/MessageEncryptor/raw/master/macOS/" + LatestVer
+									+ "/MessageEncryptor.zip";
+						} else {
+							print("Downloading Universal...");
+							sUrl = "https://github.com/NVTechKorea/MessageEncryptor/raw/master/Universal/" + LatestVer
+									+ "/MessageEncryptor.jar";
+						}
+						if (OSKind.startsWith("windows") || OSKind.startsWith("mac")) {
+							path = osdata[2] + osdata[0] + "Downloads" + osdata[0] + "MessageEncryptor_" + LatestVer
+									+ "_Update.zip";
+						} else {
+							path = osdata[2] + osdata[0] + "Downloads" + osdata[0] + "MessageEncryptor_" + LatestVer
+									+ "_Update.jar";
+						}
+						dlhelper.initiate(sUrl, path, "updateServer");
+						lblDownloading.setVisible(false);
+						dialogBox("Update download finished.\nPlease launch the downloaded software.", "Update Tool");
+						System.exit(0);
+					}else {
+						disableAllMsgCode();
+					}
 				} else {
-					print("Downloading Universal...");
-					sUrl = "https://github.com/NVTechKorea/MessageEncryptor/raw/master/Universal/" + LatestVer
-							+ "/MessageEncryptor.jar";
+					if (!atLaunch) {
+						dialogBox("You are using the latest version.", "Update Helper");
+					}
+					DeleteFile df = new DeleteFile();
+					path = osdata[2] + osdata[0] + programManu + osdata[0] + programName + osdata[0] + ver + osdata[0]
+							+ "storage" + osdata[0] + "Latest.signdoc";
+					df.initiate(path, true);
+					lblDownloading.setVisible(false);
 				}
-				if (OSKind.startsWith("windows") || OSKind.startsWith("mac")) {
-					path = osdata[2] + osdata[0] + "Downloads" + osdata[0] + "MessageEncryptor_" + LatestVer
-							+ "_Update.zip";
-				} else {
-					path = osdata[2] + osdata[0] + "Downloads" + osdata[0] + "MessageEncryptor_" + LatestVer
-							+ "_Update.jar";
-				}
-				dlhelper.initiate(sUrl, path, "updateServer");
-				lblDownloading.setVisible(false);
-				dialogBox("Update download finished.\nPlease launch the downloaded software.", "Update Tool");
-				System.exit(0);
-			} else {
-				if (!atLaunch) {
-					dialogBox("You are using the latest version.", "Update Helper");
-				}
-				DeleteFile df = new DeleteFile();
-				path = osdata[2] + osdata[0] + programManu + osdata[0] + programName + osdata[0] + ver + osdata[0]
-						+ "storage" + osdata[0] + "Latest.signdoc";
-				df.initiate(path, true);
-				lblDownloading.setVisible(false);
 			}
+		}else {
+			if(!atLaunch) {
+				dialogBox("Update is blocked in preference.", "Update Helper");
+			}	
 		}
 	}
 
@@ -449,6 +511,17 @@ public class DreamOS_Core extends JFrame {
 		String informationString = Msg;
 		JOptionPane.showMessageDialog(null, informationString, title, JOptionPane.PLAIN_MESSAGE);
 		System.out.println("GUIMSG [CORE]: " + Msg);
+	}
+	
+	public boolean ynDBox(String msg, String title) {
+		boolean yes = false;
+		int dialogResult = JOptionPane.showConfirmDialog (null, msg,title, 0);
+		if(dialogResult == JOptionPane.YES_OPTION){
+			yes = true;
+		}else {
+			yes = false;
+		}
+		return yes;
 	}
 
 	public void info() {

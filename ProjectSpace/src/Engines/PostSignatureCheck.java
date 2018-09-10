@@ -1,16 +1,23 @@
-package GUI;
+package Engines;
 
 import DreamOS.ReadFile;
-import Engines.DownloadHelper;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import java.io.File;
 
-public class PostSignatureCheck2 {
+////////////////WARNING///////////////////
+//This class is no longer used
+//since the signing format of 1.7 has
+//changed.
+//This class is only for 1.6 or lower.
+//////////////////////////////////////////
+
+public class PostSignatureCheck {
 	private String signatureFileLoc = null;
 	private String signatureFileLink = null;
 	private String ver = "1.6";
-	public PostSignatureCheck2() {}
+	public PostSignatureCheck() {}
 	public void regvar(String path) {
 		signatureFileLoc = path + "SignatureFile.signdoc";
 		signatureFileLink = "https://raw.githubusercontent.com/NVTechKorea/MessageEncryptor/master/VerificationData/SignatureFile_" + ver + ".signdoc";

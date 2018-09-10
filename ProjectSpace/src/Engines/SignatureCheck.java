@@ -1,12 +1,19 @@
-package GUI;
+package Engines;
 
 import DreamOS.ReadFile;
-import Engines.DownloadHelper;
 import DreamOS.EncryptTool;
 import DreamOS.DeleteFile;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import java.io.File;
+
+////////////////WARNING///////////////////
+// This class is no longer used
+// since the signing format of 1.7 has
+// changed.
+// This class is only for 1.6 or lower.
+//////////////////////////////////////////
+
 
 public class SignatureCheck {
 	private String signatureFileLoc = null;

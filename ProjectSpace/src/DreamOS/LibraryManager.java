@@ -5,8 +5,9 @@ package DreamOS;
 //Copyright (C) Dream Project Group
 import java.io.*;
 import java.util.Scanner;
-import GUI.PostSignatureCheck2;
-import GUI.SignatureCheck;
+
+import Engines.PostSignatureCheck_New;
+import Engines.SignatureCheck_New;
 
 public class LibraryManager {
 	String topPathPub = null;
@@ -21,6 +22,8 @@ public class LibraryManager {
 	String manu = null;
 	String progn = null;
 	String progv = null;
+	String prefPath = null;
+	boolean chkSig = true;
 	public LibraryManager() {
 	}
 
@@ -51,7 +54,7 @@ public class LibraryManager {
 		}
 	}
 
-	public void initiate(String top, String[] tops) {
+	public String initiate(String top, String[] tops) {
 		getOSNameAndPath();
 		manu = userDir + splitter + tops[0];
 		progn = manu + splitter + tops[1];
@@ -63,6 +66,7 @@ public class LibraryManager {
 		genAllDir();
 		checkFileExistance();
 		firstRunMgr();
+		return prefPath;
 	}
 
 	public void setVariable() {
@@ -74,20 +78,36 @@ public class LibraryManager {
 	public void firstRunMgr() {
 		try {
 			process = "Entered First Run Manager";
+			prefPath = resources + splitter + "preferences.mldy";
 			File firstrun = new File(variables + splitter + "firstRunFinished");
+			File prefFile = new File(prefPath);
+			WriteFile writer = new WriteFile();
+			if(!prefFile.exists()) {
+				writer.initiate(prefPath, " -checkUpdateAtLaunch true -checkSignature true -blockUpdate false");
+			}
 			if (!firstrun.exists()) {
 				process = "Writing: First Run Flag";
 				String temp = variables + splitter + "firstRunFinished";
-				WriteFile writer = new WriteFile();
 				writer.initiate(temp, " ");
+				writer.initiate(resources + splitter + "preferences.mldy", " -checkUpdateAtLaunch true -checkSignature true -blockUpdate false");
 				print("Checking signature...");
-				SignatureCheck sig = new SignatureCheck();
+				SignatureCheck_New sig = new SignatureCheck_New();
 				sig.regvar(topPathPub + "storage" + splitter, variables + splitter + "firstRunFinished");
 				sig.initiate();
 			}else {
-				PostSignatureCheck2 psc = new PostSignatureCheck2();
-				psc.regvar(storage);
-				psc.initiate();
+				ReadFile rf = new ReadFile();
+				String temp = rf.initiate(resources + splitter + "preferences.mldy");
+				String temp1[] = temp.split(" -");
+				print("Length of arguments: " + temp1.length);
+				print("Contents: " + temp);
+				if(temp1[2].equals("checkSignature false")) {
+					chkSig = false;
+				}
+				if(chkSig) {
+					PostSignatureCheck_New psc = new PostSignatureCheck_New();
+					psc.regvar(storage);
+					psc.initiate();
+				}
 			}
 
 		} catch (Exception e) {

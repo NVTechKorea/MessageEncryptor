@@ -7,7 +7,7 @@ public class Main{
 	final static String runtimeVer = "DreamOS Launch Platform 0.9.5 For MessageEncryptor";
 	final static String programManu = "DreamProjectGroup";
 	final static String programName = "DRMessageEncryptor";
-	final static String programVers = "1.6";
+	final static String programVers = "1.7";
 	final static String programEdit = "null";
 	static String nameOfOS = null;
 	static String userDir = null;
@@ -28,10 +28,11 @@ public class Main{
 		print("Launching libmgr...");
 		String[] data = {programManu, programName, programVers};
 		LibraryManager lm = new LibraryManager();
-		lm.initiate(filePath, data);
+		String rspath = lm.initiate(filePath, data);
 		print("Launching core...");
-		DreamOS_Core core = new DreamOS_Core();
-		core.initiate();
+		DreamOS_Core core = new DreamOS_Core(rspath);
+		print("Preference file detected: " + rspath);
+		core.initiate(rspath);
 	}
 	public static void getOSNameAndPath(){
 		OSReader osreader = new OSReader();
