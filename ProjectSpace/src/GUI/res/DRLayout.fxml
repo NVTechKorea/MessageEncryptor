@@ -7,8 +7,6 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -37,11 +35,6 @@
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-            <ImageView fitHeight="378.0" fitWidth="644.0" pickOnBounds="true">
-               <image>
-                  <Image url="@Chroma%201.jpg" />
-               </image>
-            </ImageView>
             <TextArea fx:id="msgToConvert" layoutX="14.0" layoutY="4.0" prefHeight="325.0" prefWidth="259.0" promptText="Message to convert" wrapText="true" />
             <TextField fx:id="msgPw" layoutX="14.0" layoutY="335.0" prefHeight="27.0" prefWidth="353.0" promptText="Passcode" />
             <TextArea fx:id="msgResult" editable="false" layoutX="284.0" layoutY="4.0" prefHeight="325.0" prefWidth="259.0" promptText="Result will be here" />

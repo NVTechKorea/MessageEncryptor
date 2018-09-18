@@ -54,7 +54,9 @@ public class DreamOS_Core extends JFrame {
 	private JButton btnDecryptlegacy;
 	private JButton btnEncryptlegacy;
 	private JButton btnPref;
-
+	private JButton btnGetEncryptableFile;
+	private JButton btnGetEncryptedFile;
+	
 	private final String headerMain = "oFuxbpSV1gga5pMhOJ9P7w==";
 	private final String splitter = "wiSiAlNOwEh8UoBQhLVkuA==";
 	private final String header = headerMain + splitter;
@@ -85,7 +87,7 @@ public class DreamOS_Core extends JFrame {
 		this.setResizable(false);
 		setTitle("DRMessageEncryptor " + ver);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 449, 429);
+		setBounds(100, 100, 449, 459);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -198,6 +200,14 @@ public class DreamOS_Core extends JFrame {
 		btnPref = new JButton("Option");
 		btnPref.setBounds(316, 372, 128, 29);
 		contentPane.add(btnPref);
+		
+		btnGetEncryptableFile = new JButton("Encrypt a File...");
+		btnGetEncryptableFile.setBounds(6, 402, 148, 29);
+		contentPane.add(btnGetEncryptableFile);
+		
+		btnGetEncryptedFile = new JButton("Decrypt a File...");
+		btnGetEncryptedFile.setBounds(301, 402, 148, 29);
+		contentPane.add(btnGetEncryptedFile);
 	}
 
 	public DreamOS_Core(String rspath) {
@@ -371,6 +381,21 @@ public class DreamOS_Core extends JFrame {
 				readPreferences();
 			}
 		});
+		btnGetEncryptedFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		btnGetEncryptableFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+	}
+	//WORKING
+	public void saveResult(String result) {
+		WriteFile wf = new  WriteFile();
+		wf.initiate(result, result);	
 	}
 	public void readPreferences() {
 		String option = PassKey.getText();

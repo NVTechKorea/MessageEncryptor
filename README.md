@@ -47,7 +47,7 @@ Go to the Android folder in the master branch.
 # Version signing status
 - [YES] 1.7
 - [NO] 1.6
-- [YES] 1.5
+- [NO] 1.5
 - [NO] 1.4
 - [NO] 1.3
 - [NO] 1.21
