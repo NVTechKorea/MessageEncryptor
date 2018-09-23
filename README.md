@@ -6,7 +6,7 @@ The messages are encrypted with AES 256, which is one of the most secure encrypt
 
 # Supported Desktop OS
 Any OS with Java runtime installed are supported! (Windows, Mac, and all Linux distros)
-- For Windows: Download Universal
+- For Windows: Able to use either Universal and EXE version
 - For macOS: Able to use either Universal and Mac Only version (app format)
 - For Linux: Download Universal
 
@@ -109,6 +109,9 @@ To change the preference, follow these steps.
 - Optional update at launch
 - Emergency auto-downgrade
     - If there is a critical error, then the program will automatically downgrade to the latest signed version.
+
+1.7 (Windows)
+- Now fully supports windows exe!
 
 # Mobile Update Log
 1.0 (Android)
