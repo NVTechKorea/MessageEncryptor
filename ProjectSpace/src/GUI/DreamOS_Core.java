@@ -451,7 +451,6 @@ public class DreamOS_Core extends JFrame {
 					byte[] b = new BigInteger(MsgResult.getText(),16).toByteArray();
 					fos.write(b);
 					fos.close();
-					//wf.initiate(removeSuffix[0], MsgResult.getText());
 				}else {
 					wf.initiate(encryptFilePath + ".dlock", MsgResult.getText());
 				}
@@ -490,6 +489,7 @@ public class DreamOS_Core extends JFrame {
 			}else {
 				File target = new File(encryptFilePath);
 				result = FileToHex.init(target);
+				result = result.toLowerCase().replace(" ", "");
 				print("Hex data: " + result);
 				encryptedFileLoaded = false;
 			}
