@@ -30,7 +30,7 @@ public class FileToHex {
 				// if 16 bytes are read, reset the counter,
 				// clear the StringBuilder for formatting purpose only.
 				if (bytesCounter == 15) {
-					sbResult.append(sbHex).append("      ").append(sbText).append("\n");
+					sbResult.append(sbHex);
 					sbHex.setLength(0);
 					sbText.setLength(0);
 					bytesCounter = 0;

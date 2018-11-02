@@ -5,13 +5,14 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.math.BigInteger;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -55,6 +56,7 @@ public class DreamOS_Core extends JFrame {
 	private String path;
 
 	private boolean encrypt = true;
+	private boolean encryptedFileLoaded = false;
 
 	private JButton btnEncrypt;
 	private JButton btnDecrypt;
@@ -240,7 +242,7 @@ public class DreamOS_Core extends JFrame {
 		btnGetEncryptableFile.setBounds(6, 402, 148, 29);
 		contentPane.add(btnGetEncryptableFile);
 
-		btnSaveFile = new JButton("Decrypt a File...");
+		btnSaveFile = new JButton("Save Data...");
 		btnSaveFile.setBounds(301, 402, 148, 29);
 		contentPane.add(btnSaveFile);
 	}
@@ -424,23 +426,44 @@ public class DreamOS_Core extends JFrame {
 		});
 		btnSaveFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				disableAllMsgCode();
+				saveFile();
 			}
 		});
 		btnGetEncryptableFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				loadFile(false);
+				disableAllMsgCode();
+				loadFile();
 			}
 		});
 	}
-	
 	// WORKING
-	public String fileSelector(boolean flag_decrypt) {
-		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-		if(flag_decrypt) {
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("Dream Message Encrypted Files", "dlock", "Encrypted File");
-			jfc.setFileFilter(filter);
+	public void saveFile() {
+		if(MsgResult.getText().equals("")) {
+			dialogBox("Unable to save file:\nFile is not decrypted.", "Error");
+		}else {
+			try {
+				WriteFile wf = new WriteFile();
+				if(encryptedFileLoaded) {
+					String[] removeSuffix = encryptFilePath.split(".dlock");
+					File write = new File(removeSuffix[0]);
+					FileOutputStream fos = new FileOutputStream(write);
+					byte[] b = new BigInteger(MsgResult.getText(),16).toByteArray();
+					fos.write(b);
+					fos.close();
+					//wf.initiate(removeSuffix[0], MsgResult.getText());
+				}else {
+					wf.initiate(encryptFilePath + ".dlock", MsgResult.getText());
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			lblSaveSuccessful.setVisible(true);
 		}
+	}
+	
+	public String fileSelector() {
+		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		int returnValue = jfc.showOpenDialog(null);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = jfc.getSelectedFile();
@@ -449,23 +472,26 @@ public class DreamOS_Core extends JFrame {
 		return "";
 	}
 	
-	public void loadFile(boolean flag_decrypt) {
-		encryptFilePath = fileSelector(flag_decrypt);
+	public void loadFile() {
+		encryptFilePath = fileSelector();
 		if (encryptFilePath.equals("")) {
 			dialogBox("Unable to load file.\nPerhaps you don't have permission to do...", "Error");
 			disableAllMsgCode();
 			lblLoadFailure.setVisible(true);
 		} else {
 			print("File load successful.");
+			print("Encrypted file path: " + encryptFilePath);
 			String result = null;
-			if(flag_decrypt) {
+			if(encryptFilePath.endsWith(".dlock")) {
 				ReadFile rf = new ReadFile();
 				result = rf.initiate(encryptFilePath);
+				encryptedFileLoaded = true;
 				print("Encrypted raw data: " + result);
 			}else {
 				File target = new File(encryptFilePath);
 				result = FileToHex.init(target);
 				print("Hex data: " + result);
+				encryptedFileLoaded = false;
 			}
 			MsgToConvert.setText(result);
 			disableAllMsgCode();
