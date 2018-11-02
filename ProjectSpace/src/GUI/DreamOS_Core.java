@@ -4,20 +4,26 @@ package GUI;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 
 import DreamOS.*;
 import Engines.TCEngine;
 import Engines.DownloadHelper;
+import Engines.FileToHex;
+
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.SwingConstants;
@@ -40,7 +46,10 @@ public class DreamOS_Core extends JFrame {
 	private JLabel lblEncryptSuccess;
 	private JLabel lblDownloading;
 	private JLabel lblNoHeader;
-
+	private JLabel lblSaveSuccessful;
+	private JLabel lblLoadSuccessful;
+	private JLabel lblLoadFailure;
+	
 	private String msg2convert = null;
 	private String key = null;
 	private String path;
@@ -55,20 +64,22 @@ public class DreamOS_Core extends JFrame {
 	private JButton btnEncryptlegacy;
 	private JButton btnPref;
 	private JButton btnGetEncryptableFile;
-	private JButton btnGetEncryptedFile;
-	
+	private JButton btnSaveFile;
+
 	private final String headerMain = "oFuxbpSV1gga5pMhOJ9P7w==";
 	private final String splitter = "wiSiAlNOwEh8UoBQhLVkuA==";
 	private final String header = headerMain + splitter;
 	private String prefpath = null;
+	private String encryptFilePath = null;
 
 	private boolean endecryptLegacy = false;
 	private boolean chkupdatelaunch = true;
 	private boolean blockupdate = false;
-	
+
 	private int count = 0;
-	
+
 	TCEngine ne = null;
+
 	public void initiate(String rspath) {
 		prefpath = rspath;
 		EventQueue.invokeLater(new Runnable() {
@@ -82,7 +93,7 @@ public class DreamOS_Core extends JFrame {
 			}
 		});
 	}
-	
+
 	public void generateGraphic() {
 		this.setResizable(false);
 		setTitle("DRMessageEncryptor " + ver);
@@ -164,6 +175,30 @@ public class DreamOS_Core extends JFrame {
 		lblDecryptSuccess.setBounds(185, 346, 103, 16);
 		lblDecryptSuccess.setVisible(false);
 		contentPane.add(lblDecryptSuccess);
+		
+		lblSaveSuccessful = new JLabel("File saving Successful");
+		lblSaveSuccessful.setHorizontalAlignment(SwingConstants.CENTER);
+		lblSaveSuccessful.setForeground(Color.GREEN);
+		lblSaveSuccessful.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
+		lblSaveSuccessful.setBounds(185, 346, 103, 16);
+		lblSaveSuccessful.setVisible(false);
+		contentPane.add(lblSaveSuccessful);
+		
+		lblLoadSuccessful = new JLabel("File loading Successful");
+		lblLoadSuccessful.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLoadSuccessful.setForeground(Color.GREEN);
+		lblLoadSuccessful.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
+		lblLoadSuccessful.setBounds(185, 346, 103, 16);
+		lblLoadSuccessful.setVisible(false);
+		contentPane.add(lblLoadSuccessful);
+		
+		lblLoadFailure = new JLabel("File loading Failure.");
+		lblLoadFailure.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLoadFailure.setForeground(Color.RED);
+		lblLoadFailure.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
+		lblLoadFailure.setBounds(185, 346, 103, 16);
+		lblLoadFailure.setVisible(false);
+		contentPane.add(lblLoadFailure);
 
 		lblEncryptSuccess = new JLabel("Encryption Successful");
 		lblEncryptSuccess.setHorizontalAlignment(SwingConstants.CENTER);
@@ -196,18 +231,18 @@ public class DreamOS_Core extends JFrame {
 		btnEncryptlegacy = new JButton("Encrypt (Legacy)");
 		btnEncryptlegacy.setBounds(156, 372, 148, 29);
 		contentPane.add(btnEncryptlegacy);
-		
+
 		btnPref = new JButton("Option");
 		btnPref.setBounds(316, 372, 128, 29);
 		contentPane.add(btnPref);
-		
-		btnGetEncryptableFile = new JButton("Encrypt a File...");
+
+		btnGetEncryptableFile = new JButton("Load a File...");
 		btnGetEncryptableFile.setBounds(6, 402, 148, 29);
 		contentPane.add(btnGetEncryptableFile);
-		
-		btnGetEncryptedFile = new JButton("Decrypt a File...");
-		btnGetEncryptedFile.setBounds(301, 402, 148, 29);
-		contentPane.add(btnGetEncryptedFile);
+
+		btnSaveFile = new JButton("Decrypt a File...");
+		btnSaveFile.setBounds(301, 402, 148, 29);
+		contentPane.add(btnSaveFile);
 	}
 
 	public DreamOS_Core(String rspath) {
@@ -220,18 +255,19 @@ public class DreamOS_Core extends JFrame {
 		loadPref();
 		checkForUpdateAtLaunch();
 	}
+
 	public String loadPref() {
 		ReadFile rf = new ReadFile();
 		String tempPref = rf.initiate(prefpath);
 		String parse[] = tempPref.split(" -");
-		if(parse[1].equals("checkUpdateAtLaunch false")) {
+		if (parse[1].equals("checkUpdateAtLaunch false")) {
 			chkupdatelaunch = false;
-		}else {
+		} else {
 			chkupdatelaunch = true;
 		}
-		if(parse[3].equals("blockUpdate true")) {
+		if (parse[3].equals("blockUpdate true")) {
 			blockupdate = true;
-		}else {
+		} else {
 			blockupdate = false;
 		}
 		return tempPref;
@@ -328,13 +364,18 @@ public class DreamOS_Core extends JFrame {
 		lblDecryptSuccess.setVisible(false);
 		lblEncryptSuccess.setVisible(false);
 		lblNoHeader.setVisible(false);
+		lblSaveSuccessful.setVisible(false);
+		lblLoadSuccessful.setVisible(false);
+		lblLoadFailure.setVisible(false);
 	}
+
 	public void checkForUpdateAtLaunch() {
-		if(chkupdatelaunch) {
+		if (chkupdatelaunch) {
 			update(true);
 		}
 		buttonListener();
 	}
+
 	public void buttonListener() {
 		print("Waiting for an action...");
 		btnEncryptlegacy.addActionListener(new ActionListener() {
@@ -381,80 +422,117 @@ public class DreamOS_Core extends JFrame {
 				readPreferences();
 			}
 		});
-		btnGetEncryptedFile.addActionListener(new ActionListener() {
+		btnSaveFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 			}
 		});
 		btnGetEncryptableFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				loadFile(false);
 			}
 		});
 	}
-	//WORKING
-	public void saveResult(String result) {
-		WriteFile wf = new  WriteFile();
-		wf.initiate(result, result);	
+	
+	// WORKING
+	public String fileSelector(boolean flag_decrypt) {
+		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+		if(flag_decrypt) {
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Dream Message Encrypted Files", "dlock", "Encrypted File");
+			jfc.setFileFilter(filter);
+		}
+		int returnValue = jfc.showOpenDialog(null);
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = jfc.getSelectedFile();
+			return selectedFile.getAbsolutePath().toString();
+		}
+		return "";
 	}
+	
+	public void loadFile(boolean flag_decrypt) {
+		encryptFilePath = fileSelector(flag_decrypt);
+		if (encryptFilePath.equals("")) {
+			dialogBox("Unable to load file.\nPerhaps you don't have permission to do...", "Error");
+			disableAllMsgCode();
+			lblLoadFailure.setVisible(true);
+		} else {
+			print("File load successful.");
+			String result = null;
+			if(flag_decrypt) {
+				ReadFile rf = new ReadFile();
+				result = rf.initiate(encryptFilePath);
+				print("Encrypted raw data: " + result);
+			}else {
+				File target = new File(encryptFilePath);
+				result = FileToHex.init(target);
+				print("Hex data: " + result);
+			}
+			MsgToConvert.setText(result);
+			disableAllMsgCode();
+			lblLoadSuccessful.setVisible(true);
+		}
+	}
+
 	public void readPreferences() {
 		String option = PassKey.getText();
-		if(option.contains("/apply")) {
-			if(option.contains(" -")) {
+		if (option.contains("/apply")) {
+			if (option.contains(" -")) {
 				String parsable[] = option.split(" -");
-				if(parsable.length==4) {
+				if (parsable.length == 4) {
 					WriteFile wf = new WriteFile();
 					String newOption[] = option.split("apply");
 					wf.initiate(prefpath, newOption[1]);
 					loadPref();
 					print(newOption[1]);
 					dialogBox("Preferences applied.", "Preference Installer");
-				}else {
+				} else {
 					print("Arguments are too short or too long!");
 				}
-			}else {
-				
+			} else {
+
 			}
-		}else {
+		} else {
 			String show = loadPref();
 			MsgResult.setText(show);
 		}
 	}
+
 	public void calculationEngine(boolean encrypt) {
 		String finalMessage = null;
 		String content = MsgToConvert.getText();
 		String pass = PassKey.getText();
-		if(content.equals("")||pass.equals("")) {
-			showWarning("One of the content fields are empty.\nPlease type contents in Passkey and Message To Convert.");
-		}else {
-			if(encrypt) {
+		if (content.equals("") || pass.equals("")) {
+			showWarning(
+					"One of the content fields are empty.\nPlease type contents in Passkey and Message To Convert.");
+		} else {
+			if (encrypt) {
 				finalMessage = ne.encrypt(content, pass);
 				String addData = finalMessage + "WrittenVersion:" + ver + "<data>";
 				finalMessage = addData;
 				MsgResult.setText(finalMessage);
 				lblEncryptSuccess.setVisible(true);
-			}else {
+			} else {
 				finalMessage = ne.decrypt(content, pass);
-				if(finalMessage.equals("SYSTEM_return:noHeaderData")) {
+				if (finalMessage.equals("SYSTEM_return:noHeaderData")) {
 					finalMessage = "";
 					lblNoHeader.setVisible(true);
-				}else if(finalMessage.equals("SYSTEM_return:wrongPasswordData")) {
+				} else if (finalMessage.equals("SYSTEM_return:wrongPasswordData")) {
 					finalMessage = "";
 					lblWrongPasscode.setVisible(true);
-				}else if(finalMessage.equals("SYSTEM_return:brokenData")) {
+				} else if (finalMessage.equals("SYSTEM_return:brokenData")) {
 					finalMessage = "";
 					lblNoHeader.setVisible(true);
-				}else {
+				} else {
 					lblDecryptSuccess.setVisible(true);
 					MsgResult.setText(finalMessage);
 				}
 			}
-			
+
 		}
 	}
 
 	public void update(boolean atLaunch) {
-		if(!blockupdate) {
+		if (!blockupdate) {
 			lblDownloading.setVisible(true);
 			print("Running update tool...");
 			print("Getting information...");
@@ -465,28 +543,30 @@ public class DreamOS_Core extends JFrame {
 			String OSKind = osdata[1];
 			OSKind = OSKind.toLowerCase();
 			String sUrl = "https://raw.githubusercontent.com/NVTechKorea/MessageEncryptor/master/VerificationData/Latest.signdoc";
-			path = osdata[2] + osdata[0] + programManu + osdata[0] + programName + osdata[0] + ver + osdata[0] + "storage"
-					+ osdata[0] + "Latest.signdoc";
+			path = osdata[2] + osdata[0] + programManu + osdata[0] + programName + osdata[0] + ver + osdata[0]
+					+ "storage" + osdata[0] + "Latest.signdoc";
 			dlhelper.initiate(sUrl, path, "getUpdateInfo");
 			ReadFile rf = new ReadFile();
 			String LatestVer = rf.initiate(path);
 			if (LatestVer != null) {
 				double fServer = Double.parseDouble(LatestVer);
-				if(fServer<vers) {
+				if (fServer < vers) {
 					downgrade = true;
-					dialogBox("Current version has a problem and needed to be\ndowngraded to the latest signed version.","Update Helper");
-				}else {
+					dialogBox(
+							"Current version has a problem and needed to be\ndowngraded to the latest signed version.",
+							"Update Helper");
+				} else {
 					downgrade = false;
 				}
 				if (!LatestVer.equals(vers + "")) {
 					boolean yes = true;
-					if(!downgrade) {
+					if (!downgrade) {
 						yes = ynDBox("Update found: " + LatestVer + "\nCurrent version: " + vers
 								+ "\nWould you like to update?", "Update found");
-					}else {
+					} else {
 						yes = true;
 					}
-					if(yes) {
+					if (yes) {
 						if (OSKind.contains("windows")) {
 							print("Downloading for Windows...");
 							sUrl = "https://github.com/NVTechKorea/MessageEncryptor/raw/master/Windows/" + LatestVer
@@ -511,7 +591,7 @@ public class DreamOS_Core extends JFrame {
 						lblDownloading.setVisible(false);
 						dialogBox("Update download finished.\nPlease launch the downloaded software.", "Update Tool");
 						System.exit(0);
-					}else {
+					} else {
 						disableAllMsgCode();
 					}
 				} else {
@@ -525,10 +605,10 @@ public class DreamOS_Core extends JFrame {
 					lblDownloading.setVisible(false);
 				}
 			}
-		}else {
-			if(!atLaunch) {
+		} else {
+			if (!atLaunch) {
 				dialogBox("Update is blocked in preference.", "Update Helper");
-			}	
+			}
 		}
 	}
 
@@ -537,13 +617,13 @@ public class DreamOS_Core extends JFrame {
 		JOptionPane.showMessageDialog(null, informationString, title, JOptionPane.PLAIN_MESSAGE);
 		System.out.println("GUIMSG [CORE]: " + Msg);
 	}
-	
+
 	public boolean ynDBox(String msg, String title) {
 		boolean yes = false;
-		int dialogResult = JOptionPane.showConfirmDialog (null, msg,title, 0);
-		if(dialogResult == JOptionPane.YES_OPTION){
+		int dialogResult = JOptionPane.showConfirmDialog(null, msg, title, 0);
+		if (dialogResult == JOptionPane.YES_OPTION) {
 			yes = true;
-		}else {
+		} else {
 			yes = false;
 		}
 		return yes;
