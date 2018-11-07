@@ -113,6 +113,10 @@ To change the preference, follow these steps.
 1.7 (Windows)
 - Now fully supports windows exe!
 
+2.0 (Upcoming)
+- Planning to support binary file encryption
+- Maybe able to fix 1.7's minor bug
+
 # Mobile Update Log
 1.0 (Android)
 - Initial Release
